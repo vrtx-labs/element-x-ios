@@ -4,12 +4,7 @@ on:
   workflow_dispatch:
   
   push:
-    branches: [ develop ]
-    paths:
-      - 'ElementX/Sources/Services/Agent/**'
-      - 'ElementX/Sources/Screens/VoiceAgentSettingsScreen/**'
-      - 'ElementX/Sources/Screens/Timeline/View/TimelineItemViews/QuickActions*'
-      - 'ElementX/SupportingFiles/target.yml'
+    branches: [ develop, 'feature/voice-agent-kitt' ]
 
 permissions: {}
 
