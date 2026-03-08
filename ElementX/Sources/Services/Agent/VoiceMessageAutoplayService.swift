@@ -54,13 +54,21 @@ final class VoiceMessageAutoplayService {
             return
         }
         
-        // Monitor timeline items for new voice messages from the target
-        timelineController.timelineItemsPublisher
+        // Monitor timeline updates via callbacks
+        timelineController.callbacks
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] items in
-                self?.processTimelineItems(items, targetUserID: targetUserID)
+            .sink { [weak self] callback in
+                switch callback {
+                case .updatedTimelineItems(let timelineItems, _):
+                    self?.processTimelineItems(timelineItems, targetUserID: targetUserID)
+                default:
+                    break
+                }
             }
             .store(in: &cancellables)
+        
+        // Process any existing items
+        processTimelineItems(timelineController.timelineItems, targetUserID: targetUserID)
     }
     
     /// Stop monitoring and clear the queue.
@@ -78,15 +86,14 @@ final class VoiceMessageAutoplayService {
     
     // MARK: - Private
     
-    private func processTimelineItems(_ items: [TimelineItemProxy], targetUserID: String) {
+    private func processTimelineItems(_ items: [RoomTimelineItemProtocol], targetUserID: String) {
         for item in items {
-            guard case let .event(eventItem) = item,
-                  eventItem.senderID == targetUserID,
-                  let timelineItem = eventItem.asTimelineItem() as? VoiceMessageRoomTimelineItem else {
+            guard let voiceItem = item as? VoiceMessageRoomTimelineItem,
+                  voiceItem.sender.id == targetUserID else {
                 continue
             }
             
-            let itemID = timelineItem.id
+            let itemID = voiceItem.id
             
             // Skip if already autoplayed
             guard !autoplayedItemIDs.contains(itemID) else {

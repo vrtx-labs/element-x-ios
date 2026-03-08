@@ -39,12 +39,12 @@ final class RemoteCommandPTTService: RemoteCommandPTTServiceProtocol {
         commandCenter.nextTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                if isRecording {
-                    actionsSubject.send(.stopRecording)
-                    isRecording = false
+                if self.isRecording {
+                    self.actionsSubject.send(.stopRecording)
+                    self.isRecording = false
                 } else {
-                    actionsSubject.send(.startRecording)
-                    isRecording = true
+                    self.actionsSubject.send(.startRecording)
+                    self.isRecording = true
                 }
             }
             return .success

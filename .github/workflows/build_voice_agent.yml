@@ -40,4 +40,11 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify || true
+            2>&1 | tee build_output.log
+          
+          # Check for compilation errors
+          if grep -q "error:" build_output.log; then
+            echo "::error::Build failed with compilation errors"
+            grep "error:" build_output.log
+            exit 1
+          fi
