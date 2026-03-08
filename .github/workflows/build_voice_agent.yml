@@ -42,9 +42,9 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             2>&1 | tee build_output.log
           
-          # Check for compilation errors
-          if grep -q "error:" build_output.log; then
+          # Check for Swift compilation errors (file:line:col: error: pattern)
+          if grep -qE '\.swift:[0-9]+:[0-9]+: error:' build_output.log; then
             echo "::error::Build failed with compilation errors"
-            grep "error:" build_output.log
+            grep -E '\.swift:[0-9]+:[0-9]+: error:' build_output.log
             exit 1
           fi

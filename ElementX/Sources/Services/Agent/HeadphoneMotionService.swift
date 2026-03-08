@@ -44,7 +44,7 @@ final class HeadphoneMotionService: HeadphoneMotionServiceProtocol {
     private let shakeMinDirectionChanges = 3
     
     func start() {
-        guard CMHeadphoneMotionManager.isDeviceMotionAvailable else {
+        guard motionManager.isDeviceMotionAvailable else {
             MXLog.info("Headphone motion not available on this device")
             return
         }
