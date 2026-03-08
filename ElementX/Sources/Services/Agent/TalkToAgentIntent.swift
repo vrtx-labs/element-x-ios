@@ -10,25 +10,30 @@ import Foundation
 
 /// Siri App Intent to quickly start a voice agent conversation.
 ///
-/// Usage: "Hey Siri, talk to my agent in [room name]"
-/// Opens the specified room and arms PTT recording.
+/// Usage: "Hey Siri, talk to my agent"
+/// Opens the app and arms PTT recording in the most recently configured voice agent room.
 @available(iOS 16.0, *)
 struct TalkToAgentIntent: AppIntent {
     static var title: LocalizedStringResource = "Talk to Agent"
-    static var description = IntentDescription("Start a voice conversation with your agent in a Matrix room.")
+    static var description = IntentDescription("Start a voice conversation with your agent.")
     
     @Parameter(title: "Room Name")
-    var roomName: String
+    var roomName: String?
     
     static var openAppWhenRun = true
     
     @MainActor
     func perform() async throws -> some IntentResult {
         // Post a notification that the app can observe to navigate to the room
+        var userInfo = [String: Any]()
+        if let roomName {
+            userInfo["roomName"] = roomName
+        }
+        
         NotificationCenter.default.post(
             name: .voiceAgentIntentTriggered,
             object: nil,
-            userInfo: ["roomName": roomName]
+            userInfo: userInfo
         )
         
         return .result()
@@ -42,9 +47,8 @@ struct AgentAppShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: TalkToAgentIntent(),
             phrases: [
-                "Talk to my agent in \(\.$roomName) with \(.applicationName)",
-                "Start voice agent in \(\.$roomName) with \(.applicationName)",
-                "Open agent \(\.$roomName) in \(.applicationName)"
+                "Talk to my agent with \(.applicationName)",
+                "Start voice agent with \(.applicationName)"
             ],
             shortTitle: "Talk to Agent",
             systemImageName: "mic.fill"
