@@ -35,6 +35,7 @@ enum RoomDetailsScreenCoordinatorAction {
     case presentSecurityAndPrivacyScreen
     case presentReportRoomScreen
     case transferOwnership
+    case presentVoiceAgentSettingsScreen
 }
 
 final class RoomDetailsScreenCoordinator: CoordinatorProtocol {
@@ -97,6 +98,8 @@ final class RoomDetailsScreenCoordinator: CoordinatorProtocol {
                     actionsSubject.send(.presentReportRoomScreen)
                 case .transferOwnership:
                     actionsSubject.send(.transferOwnership)
+                case .requestVoiceAgentSettingsPresentation:
+                    actionsSubject.send(.presentVoiceAgentSettingsScreen)
                 }
             }
             .store(in: &cancellables)

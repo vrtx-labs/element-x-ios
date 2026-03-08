@@ -64,6 +64,7 @@ extension RoomFlowCoordinator {
         case roomDetailsEditScreen
         case notificationSettings
         case globalNotificationSettings
+        case voiceAgentSettings
         case inviteUsersScreen(previousState: State)
         case mediaUploadPicker(mode: MediaPickerScreenMode, previousState: State)
         case mediaUploadPreview(mediaURLs: [URL], previousState: State)
@@ -131,6 +132,9 @@ extension RoomFlowCoordinator {
         
         case presentGlobalNotificationSettingsScreen
         case dismissGlobalNotificationSettingsScreen
+        
+        case presentVoiceAgentSettingsScreen
+        case dismissVoiceAgentSettingsScreen
         
         case presentInviteUsersScreen
         case dismissInviteUsersScreen
@@ -308,6 +312,11 @@ extension RoomFlowCoordinator {
             case (.roomDetails, .presentNotificationSettingsScreen):
                 return .notificationSettings
             case (.notificationSettings, .dismissNotificationSettingsScreen):
+                return .roomDetails(isRoot: false)
+                
+            case (.roomDetails, .presentVoiceAgentSettingsScreen):
+                return .voiceAgentSettings
+            case (.voiceAgentSettings, .dismissVoiceAgentSettingsScreen):
                 return .roomDetails(isRoot: false)
                 
             case (.roomDetails, .presentPollsHistory):

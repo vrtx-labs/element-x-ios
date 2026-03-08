@@ -83,6 +83,10 @@ final class AppSettings {
         // Doug's tweaks 🔧
         case hideUnreadMessagesBadge
         case hideQuietNotificationAlerts
+        
+        // Voice Agent
+        case globalAutoplayEnabled
+        case pttEnabled
     }
     
     private static var suiteName: String = InfoPlistReader.main.appGroupIdentifier
@@ -438,6 +442,16 @@ final class AppSettings {
     
     @UserPreference(key: UserDefaultsKeys.developerOptionsEnabled, defaultValue: appBuildType == .debug, storageType: .userDefaults(store))
     var developerOptionsEnabled
+    
+    // MARK: - Voice Agent
+    
+    /// Master toggle for autoplaying voice messages from the configured voice target
+    @UserPreference(key: UserDefaultsKeys.globalAutoplayEnabled, defaultValue: false, storageType: .userDefaults(store))
+    var globalAutoplayEnabled
+    
+    /// Master toggle for push-to-talk hardware controls (AirPods, volume buttons)
+    @UserPreference(key: UserDefaultsKeys.pttEnabled, defaultValue: false, storageType: .userDefaults(store))
+    var pttEnabled
 }
 
 extension AppSettings: CommonSettingsProtocol { }

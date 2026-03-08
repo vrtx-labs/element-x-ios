@@ -175,6 +175,11 @@ struct RoomDetailsScreen: View {
                     context.send(viewAction: .toggleFavourite(isFavourite: newValue))
                 }
             
+            ListRow(label: .default(title: "Voice Agent Mode", icon: \.micOn),
+                    kind: .navigationLink {
+                        context.send(viewAction: .processTapVoiceAgentSettings)
+                    })
+            
             if context.viewState.canSeeSecurityAndPrivacy {
                 ListRow(label: .default(title: L10n.screenRoomDetailsSecurityAndPrivacyTitle, icon: \.lock),
                         kind: .navigationLink {

@@ -458,6 +458,9 @@ class RoomFlowCoordinator: FlowCoordinatorProtocol {
             case (.roomDetails, .presentNotificationSettingsScreen, .notificationSettings):
                 presentNotificationSettingsScreen()
                 
+            case (.roomDetails, .presentVoiceAgentSettingsScreen, .voiceAgentSettings):
+                presentVoiceAgentSettingsScreen()
+                
             case (.roomDetails, .presentPollsHistory, .pollsHistory):
                 Task { await self.presentRoomPollsHistory(animated: animated) }
                 
@@ -940,6 +943,8 @@ class RoomFlowCoordinator: FlowCoordinatorProtocol {
                 stateMachine.tryEvent(.startMembersFlow(entryPoint: .roomMember(userID: userID)))
             case .presentReportRoomScreen:
                 stateMachine.tryEvent(.presentReportRoomScreen)
+            case .presentVoiceAgentSettingsScreen:
+                stateMachine.tryEvent(.presentVoiceAgentSettingsScreen)
             case .transferOwnership:
                 stateMachine.tryEvent(.presentTransferOwnershipScreen)
             }
@@ -1267,6 +1272,17 @@ class RoomFlowCoordinator: FlowCoordinatorProtocol {
         
         navigationStackCoordinator.push(coordinator) { [weak self] in
             self?.stateMachine.tryEvent(.dismissNotificationSettingsScreen)
+        }
+    }
+    
+    private func presentVoiceAgentSettingsScreen() {
+        let parameters = VoiceAgentSettingsScreenCoordinatorParameters(navigationStackCoordinator: navigationStackCoordinator,
+                                                                       roomProxy: roomProxy)
+        
+        let coordinator = VoiceAgentSettingsScreenCoordinator(parameters: parameters)
+        
+        navigationStackCoordinator.push(coordinator) { [weak self] in
+            self?.stateMachine.tryEvent(.dismissVoiceAgentSettingsScreen)
         }
     }
     

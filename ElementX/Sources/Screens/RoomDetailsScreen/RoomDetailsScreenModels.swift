@@ -29,6 +29,7 @@ enum RoomDetailsScreenViewModelAction: Equatable {
     case displaySecurityAndPrivacy
     case displayReportRoom
     case transferOwnership
+    case requestVoiceAgentSettingsPresentation
 }
 
 // MARK: View
@@ -228,6 +229,7 @@ enum RoomDetailsScreenViewAction {
     case processTapMediaEvents
     case processTapRequestsToJoin
     case processTapReport
+    case processTapVoiceAgentSettings
 }
 
 enum RoomDetailsScreenViewShortcut {

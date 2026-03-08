@@ -1,0 +1,48 @@
+name: Build Voice Agent
+
+on:
+  workflow_dispatch:
+  
+  push:
+    branches: [ develop ]
+    paths:
+      - 'ElementX/Sources/Services/Agent/**'
+      - 'ElementX/Sources/Screens/VoiceAgentSettingsScreen/**'
+      - 'ElementX/Sources/Screens/Timeline/View/TimelineItemViews/QuickActions*'
+      - 'ElementX/SupportingFiles/target.yml'
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    concurrency:
+      group: ${{ format('build-voice-agent-{0}', github.ref) }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: nschloe/action-cached-lfs-checkout@f46300cd8952454b9f0a21a3d133d4bd5684cfc2 #v1.2.3
+        with:
+          persist-credentials: false
+
+      - name: Setup environment
+        run: source ci_scripts/ci_common.sh && setup_github_actions_environment
+
+      - name: Generate Xcode project
+        run: xcodegen
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -scheme ElementX \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.1' \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify || true
