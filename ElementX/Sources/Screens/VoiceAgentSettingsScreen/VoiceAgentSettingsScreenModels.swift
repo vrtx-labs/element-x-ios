@@ -19,7 +19,6 @@ enum VoiceAgentSettingsScreenViewAction {
 
 struct VoiceAgentSettingsScreenViewState: BindableState {
     var roomID: String
-    var isEnabled: Bool
     var voiceTargetUserID: String?
     var roomMembers: [VoiceAgentMemberItem]
     var bindings = VoiceAgentSettingsScreenViewStateBindings()
@@ -30,6 +29,7 @@ struct VoiceAgentSettingsScreenViewState: BindableState {
 }
 
 struct VoiceAgentSettingsScreenViewStateBindings {
+    var isEnabled = false
     var alertInfo: AlertInfo<VoiceAgentSettingsScreenErrorType>?
 }
 

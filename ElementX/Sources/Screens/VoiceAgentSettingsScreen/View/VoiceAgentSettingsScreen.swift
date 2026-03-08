@@ -19,7 +19,7 @@ struct VoiceAgentSettingsScreen: View {
         Form {
             enableSection
             
-            if context.viewState.isEnabled {
+            if context.isEnabled {
                 voiceTargetSection
             }
         }
@@ -35,9 +35,10 @@ struct VoiceAgentSettingsScreen: View {
         Section {
             ListRow(label: .default(title: "Voice Agent Mode",
                                     icon: \.micOn),
-                    kind: .toggle($context[keyPath: \.isEnabled], action: {
-                        context.send(viewAction: .toggleEnabled)
-                    }))
+                    kind: .toggle($context.isEnabled))
+                .onChange(of: context.isEnabled) { _, _ in
+                    context.send(viewAction: .toggleEnabled)
+                }
         } footer: {
             Text("Enable to select a room member as a voice agent target. Their voice messages will autoplay and reactions will trigger sound cues.")
                 .compoundListSectionFooter()
@@ -75,11 +76,3 @@ struct VoiceAgentSettingsScreen: View {
     }
 }
 
-// MARK: - Bindings
-
-private extension Binding where Value == VoiceAgentSettingsScreenViewState {
-    var isEnabled: Binding<Bool> {
-        Binding<Bool>(get: { wrappedValue.isEnabled },
-                      set: { _ in })
-    }
-}

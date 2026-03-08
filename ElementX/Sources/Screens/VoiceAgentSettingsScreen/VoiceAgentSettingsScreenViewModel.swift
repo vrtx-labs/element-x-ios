@@ -31,9 +31,9 @@ class VoiceAgentSettingsScreenViewModel: VoiceAgentSettingsScreenViewModelType, 
         
         super.init(initialViewState: VoiceAgentSettingsScreenViewState(
             roomID: roomProxy.id,
-            isEnabled: settings.isEnabled,
             voiceTargetUserID: settings.voiceTargetUserID,
-            roomMembers: members
+            roomMembers: members,
+            bindings: VoiceAgentSettingsScreenViewStateBindings(isEnabled: settings.isEnabled)
         ))
         
         setupMembersSubscription()
@@ -44,8 +44,8 @@ class VoiceAgentSettingsScreenViewModel: VoiceAgentSettingsScreenViewModelType, 
     override func process(viewAction: VoiceAgentSettingsScreenViewAction) {
         switch viewAction {
         case .toggleEnabled:
-            state.isEnabled.toggle()
-            if !state.isEnabled {
+            state.bindings.isEnabled.toggle()
+            if !state.bindings.isEnabled {
                 state.voiceTargetUserID = nil
             }
             saveSettings()
@@ -66,7 +66,7 @@ class VoiceAgentSettingsScreenViewModel: VoiceAgentSettingsScreenViewModelType, 
             .sink { [weak self] members in
                 guard let self else { return }
                 state.roomMembers = members
-                    .filter { $0.userID != roomProxy.ownUserID }
+                    .filter { $0.userID != self.roomProxy.ownUserID }
                     .map { VoiceAgentMemberItem(userID: $0.userID, displayName: $0.displayName, avatarURL: $0.avatarURL) }
             }
             .store(in: &cancellables)
@@ -74,7 +74,7 @@ class VoiceAgentSettingsScreenViewModel: VoiceAgentSettingsScreenViewModelType, 
     
     private func saveSettings() {
         var settings = settingsStore.settings(for: roomProxy.id)
-        settings.isEnabled = state.isEnabled
+        settings.isEnabled = state.bindings.isEnabled
         settings.voiceTargetUserID = state.voiceTargetUserID
         settingsStore.save(settings, for: roomProxy.id)
     }
